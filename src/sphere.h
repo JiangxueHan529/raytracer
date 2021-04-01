@@ -5,6 +5,7 @@
 #include "hittable.h"
 #include "AGLM.h"
 
+
 class sphere : public hittable {
 public:
    sphere() : radius(0), center(0), mat_ptr(0) {}
@@ -20,29 +21,60 @@ public:
 };
 
 bool sphere::hit(const ray& r, hit_record& rec) const {
-   glm::vec3 oc = r.origin() - center;
-   float a = glm::dot(r.direction(), r.direction());
-   float half_b = glm::dot(oc, r.direction());
-   float c = glm::length2(oc) - radius*radius;
+   //glm::vec3 oc = r.origin() - center;
+   //float a = glm::dot(r.direction(), r.direction());
+   //float half_b = glm::dot(oc, r.direction());
+   //float c = glm::length2(oc) - radius*radius;
 
-   float discriminant = half_b*half_b - a*c;
-   if (discriminant < 0) return false;
-   float sqrtd = sqrt(discriminant);
+   //float discriminant = half_b*half_b - a*c;
+   //if (discriminant < 0) return false;
+   //float sqrtd = sqrt(discriminant);
 
-   float t = (-half_b - sqrtd) / a;
-   if (t < 0) t = (-half_b + sqrtd) / a;
-   if (t < 0) return false;
+   //float t = (-half_b - sqrtd) / a;
+   //if (t < 0) t = (-half_b + sqrtd) / a;
+   //if (t < 0) return false;
 
-   // save relevant data in hit record
-   rec.t = t; // save the time when we hit the object
-   rec.p = r.at(t); // ray.origin + t * ray.direction
-   rec.mat_ptr = mat_ptr; 
+   //// save relevant data in hit record
+   //rec.t = t; // save the time when we hit the object
+   //rec.p = r.at(t); // ray.origin + t * ray.direction
+   //rec.mat_ptr = mat_ptr; 
 
-   // save normal
-   glm::vec3 outward_normal = normalize(rec.p - center); // compute unit length normal
-   rec.set_face_normal(r, outward_normal);
+   //// save normal
+   //glm::vec3 outward_normal = normalize(rec.p - center); // compute unit length normal
+   //rec.set_face_normal(r, outward_normal);
 
-   return true;
+   //return true;
+    glm::vec3 el = center - r.origin();
+    float s = dot(el, normalize(r.direction()));
+    float elSqr = dot(el, el);
+    float rSqr = radius * radius;
+    if (s < 0 && elSqr > rSqr) {
+        return false;
+    }
+    float mSqr = elSqr - s * s;
+    if (mSqr > rSqr) {
+        return false;
+    }
+    float q = sqrt(rSqr - mSqr);
+    float t;
+    if (elSqr > rSqr) {
+        t = (s - q)/ glm::length(r.direction());
+        rec.t = t;
+        rec.p = r.at(t);
+        rec.mat_ptr = mat_ptr;
+        glm::vec3 outward_normal = normalize(rec.p - center);
+        rec.set_face_normal(r, outward_normal);
+    }
+    else {
+        t = (s + q) / glm::length(r.direction());
+        rec.t = t;
+        rec.p = r.at(t);
+        rec.mat_ptr = mat_ptr;
+        glm::vec3 outward_normal = normalize(rec.p - center);
+        rec.set_face_normal(r, outward_normal);
+    }
+    return true;
+
 }
 
 #endif

@@ -10,10 +10,22 @@ public:
    plane(const glm::point3& p, const glm::vec3& normal, 
       std::shared_ptr<material> m) : a(p), n(normal), mat_ptr(m) {};
 
-   virtual bool hit(const ray& r, hit_record& rec) const override
+   bool hit(const ray& r, hit_record& rec) const
    {
-      // todo
-      return false;
+       if (dot(normalize(r.direction()), n) == 0) {
+           return false;
+      }
+       float t = (float)dot((a - r.origin()), n) / (float)dot(normalize(r.direction()), n);
+       if (t < 0) {
+           return false;
+       }
+       rec.t = t;
+       rec.p = r.at(t);
+       rec.mat_ptr = mat_ptr;
+       //normal not right here
+       glm::vec3 outward_normal = normalize(n);
+       rec.set_face_normal(r, outward_normal);
+      return true;
    }
 
 public:

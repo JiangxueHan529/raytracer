@@ -5,7 +5,7 @@
 #include "AGLM.h"
 #include "ray.h"
 #include "hittable.h"
-
+using namespace glm;
 class material {
 public:
   virtual bool scatter(const ray& r_in, const hit_record& rec, 
@@ -21,8 +21,21 @@ public:
      glm::color& attenuation, ray& scattered) const override 
   {
      // todo
+
+      /*vec3 unitn = normalize(rec.normal);
+      vec3 lightDir = normalize(vec3(5, 5, 0) - rec.p);
+      color diffuse = max(vec3(0), dot(unitn, lightDir)) * albedo;
+
+      attenuation = diffuse;
+      return false;*/
+
+      vec3 scatter_direction = rec.normal + random_unit_vector();
+      if (near_zero(scatter_direction)) {
+          scatter_direction = rec.normal;
+      }
+      scattered = ray(rec.p, scatter_direction);
       attenuation = albedo;
-      return false;
+      return true;
   }
 
 public:
