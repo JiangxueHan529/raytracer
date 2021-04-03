@@ -69,13 +69,14 @@ public:
   virtual bool scatter(const ray& r_in, const hit_record& hit, 
      glm::color& attenuation, ray& scattered) const override 
   {
-      glm::color Ia = ka * ambientColor;
-      glm::color Id = kd * (float)fmax(0.0f,(dot(normalize(lightPos - hit.p), normalize(hit.normal)))) * diffuseColor; // need to add material color (albedo)
-      vec3 view = normalize(viewPos - hit.p);
-      vec3 r = normalize(reflect(normalize(lightPos - hit.p), normalize(hit.normal))); //2 * dot(normalize(lightPos - hit.p), normalize(hit.normal)) * normalize(hit.normal) - normalize(lightPos - hit.p);
-      glm::color Is = ks * specColor * pow((dot(view, r)), shininess);
-      attenuation = Ia + Id + Is;
-     return true;
+      //glm::color Ia = ka * ambientColor;
+      //glm::color Id = kd * (float)fmax(0.0f,(dot(normalize(lightPos - hit.p), normalize(hit.normal)))) * diffuseColor; // need to add material color (albedo)
+      //vec3 view = normalize(viewPos - hit.p);
+      //vec3 r = normalize(reflect(normalize(lightPos - hit.p), normalize(hit.normal))); //2 * dot(normalize(lightPos - hit.p), normalize(hit.normal)) * normalize(hit.normal) - normalize(lightPos - hit.p);
+      //glm::color Is = ks * specColor * pow((dot(view, r)), shininess);
+      //attenuation = Ia + Id + Is;
+      attenuation = color(0);
+     return false;
   }
 
 public:
@@ -114,6 +115,13 @@ public:
   dielectric(float index_of_refraction) : ir(index_of_refraction) {}
 
 
+  vec3 refract(const vec3& uv, const vec3& n, float etai_over_etat)const {
+      float cos_theta = fmin(dot(-uv, n), 1.0);
+      vec3 r_out_perp = etai_over_etat * (uv + cos_theta * n);
+      vec3 r_out_parallel = (float)-sqrt(fabs(1.0 - r_out_perp.length() * r_out_perp.length())) * n;
+      return r_out_perp + r_out_parallel;
+  }
+
   virtual bool scatter(const ray& r_in, const hit_record& rec, 
      glm::color& attenuation, ray& scattered) const override 
    {
@@ -124,13 +132,6 @@ public:
       scattered = ray(rec.p, refracted);
       return true;
    }
-
-  vec3 refract(const vec3& uv, const vec3& n, float etai_over_etat) {
-      float cos_theta = fmin(dot(-uv, n), 1.0);
-      vec3 r_out_perp = etai_over_etat * (uv + cos_theta * n);
-      vec3 r_out_parallel = (float)-sqrt(fabs(1.0 - r_out_perp.length() * r_out_perp.length())) * n;
-      return r_out_perp + r_out_parallel;
-  }
 
 
 public:
