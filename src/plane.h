@@ -15,6 +15,9 @@ public:
        if (dot(normalize(r.direction()), n) == 0) {
            return false;
       }
+       if (dot((r.origin() - a), n) == 0 && dot((r.origin() + r.direction() - a), n) == 0) {
+           return false;
+       }
        float t = (float)dot((a - r.origin()), n) / (float)dot(normalize(r.direction()), n);
        if (t < 0) {
            return false;
@@ -22,7 +25,6 @@ public:
        rec.t = t;
        rec.p = r.at(t);
        rec.mat_ptr = mat_ptr;
-       //normal not right here
        glm::vec3 outward_normal = normalize(n);
        rec.set_face_normal(r, outward_normal);
       return true;

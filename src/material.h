@@ -69,9 +69,13 @@ public:
   virtual bool scatter(const ray& r_in, const hit_record& hit, 
      glm::color& attenuation, ray& scattered) const override 
   {
-     // todo
-     attenuation = glm::color(0);
-     return false;
+      glm::color Ia = ka * ambientColor;
+      glm::color Id = kd * (float)fmax(0.0f,(dot(normalize(lightPos - hit.p), normalize(hit.normal)))) * diffuseColor; // need to add material color (albedo)
+      vec3 view = normalize(viewPos - hit.p);
+      vec3 r = normalize(reflect(normalize(lightPos - hit.p), normalize(hit.normal))); //2 * dot(normalize(lightPos - hit.p), normalize(hit.normal)) * normalize(hit.normal) - normalize(lightPos - hit.p);
+      glm::color Is = ks * specColor * pow((dot(view, r)), shininess);
+      attenuation = Ia + Id + Is;
+     return true;
   }
 
 public:
@@ -93,9 +97,11 @@ public:
    virtual bool scatter(const ray& r_in, const hit_record& rec, 
       glm::color& attenuation, ray& scattered) const override 
    {
-     // todo
-      attenuation = albedo;
-      return false;
+       vec3 reflected = reflect(normalize(r_in.direction()), rec.normal);
+       scattered = ray(rec.p, reflected + fuzz * random_unit_sphere());
+       attenuation = albedo;
+       return (dot(scattered.direction(), rec.normal) > 0);
+
    }
 
 public:
@@ -107,13 +113,25 @@ class dielectric : public material {
 public:
   dielectric(float index_of_refraction) : ir(index_of_refraction) {}
 
+
   virtual bool scatter(const ray& r_in, const hit_record& rec, 
      glm::color& attenuation, ray& scattered) const override 
    {
-     // todo
-     attenuation = glm::color(0);
-     return false;
+      attenuation = color(1.0, 1.0, 1.0);
+      float refraction_ratio = rec.front_face ? (1.0f / ir) : ir;
+      vec3 unit_direction = normalize(r_in.direction());
+      vec3 refracted = refract(unit_direction, rec.normal, refraction_ratio);
+      scattered = ray(rec.p, refracted);
+      return true;
    }
+
+  vec3 refract(const vec3& uv, const vec3& n, float etai_over_etat) {
+      float cos_theta = fmin(dot(-uv, n), 1.0);
+      vec3 r_out_perp = etai_over_etat * (uv + cos_theta * n);
+      vec3 r_out_parallel = (float)-sqrt(fabs(1.0 - r_out_perp.length() * r_out_perp.length())) * n;
+      return r_out_perp + r_out_parallel;
+  }
+
 
 public:
   float ir; // Index of Refraction
