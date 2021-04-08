@@ -14,7 +14,7 @@
 using namespace glm;
 using namespace agl;
 using namespace std;
-int number = 2;
+int number = 3;
 color ray_color(const ray& r, const hittable_list& world, int depth)
 {
     hit_record rec;
@@ -90,11 +90,12 @@ void ray_trace(ppm_image& image)
     shared_ptr<material> gray = make_shared<lambertian>(color(0.5f));
     shared_ptr<material> matteGreen = make_shared<lambertian>(color(0, 0.5f, 0));
     shared_ptr<material> matteLightGreen = make_shared<lambertian>(color(0.8f, 1.0f, 0.8f));
-    shared_ptr<material> matteBlue = make_shared<lambertian>(color(0.8f, 0.8f, 1.0f));
-    shared_ptr<material> matteRed = make_shared<lambertian>(color(1.0f, 0.8f, 0.8f));
-    shared_ptr<material> white= make_shared<metal>(color(1, 1, 1),0);
+    shared_ptr<material> matteBlue = make_shared<lambertian>(color(0.9f, 0.9f, 1.0f));
+    shared_ptr<material> matteRed = make_shared<lambertian>(color(1.0f, 0.7f, 0.7f));
+    shared_ptr<material> white= make_shared<lambertian>(color(1, 1, 1));
     shared_ptr<material> metalBlue = make_shared<metal>(color(0.5f, 0.5f, 1.0f), 0);
     shared_ptr<material> metalRed = make_shared<metal>(color(1, 0.5f, 0.5f), 0);
+    shared_ptr<material> metalYellow = make_shared<metal>(color(1, 0.7f, 1.0f), 0);
     shared_ptr<material> glass = make_shared<dielectric>(1.5f);
 
 
@@ -107,6 +108,20 @@ void ray_trace(ppm_image& image)
         world.add(make_shared<plane>(point3(-1, 0.5, 0), vec3(1, 0, 0), metalRed));
         world.add(make_shared<plane>(point3(0, 1, 0), vec3(0, 0, 1), metalBlue));
         world.add(make_shared<plane>(point3(0, -0.5, 0), vec3(0, 1, 0),white));
+    }
+    else {
+        world.add(make_shared<plane>(point3(-1, 0.5, 0), vec3(1, 0, 0), matteRed));
+        world.add(make_shared<plane>(point3(0, 1, 0), vec3(0, 0, 1), matteLightGreen));
+        world.add(make_shared<plane>(point3(0, -0.5, 0), vec3(0, 1, 0), matteBlue));
+        world.add(make_shared<sphere>(point3(1.3, 0, 0), 0.2f, phongDefault));
+        world.add(make_shared<sphere>(point3(1.3, 0.5, 0), 0.2f, metalRed));
+        world.add(make_shared<sphere>(point3(0.8, 0, 0), 0.2f, metalBlue));
+        world.add(make_shared<sphere>(point3(1.3, -0.5, 0), 0.2f, metalYellow));
+        world.add(make_shared<sphere>(point3(1.8, 0, 0), 0.2f, white));
+        world.add(make_shared<triangle>(point3(0, 0.2, 2.4), point3(-0.5, -0.5, 2.2), point3(0, -0.55, 3), phongDefault));
+        world.add(make_shared<triangle>(point3(0, 0.2, 2.4), point3(0.5, -0.5, 2.2), point3(0, -0.55, 3), phongDefault));
+        world.add(make_shared<triangle>(point3(-0.6, 0.1, 2.9), point3(-1, -0.8, 2.7), point3(-0.8, -0.85, 3.2), metalYellow));
+        world.add(make_shared<triangle>(point3(-0.6, 0.1, 2.9), point3(-0.25, -0.8, 2.7), point3(-0.8, -0.85, 3.2), glass));
     }
     //world.add(make_shared<sphere>(point3(-2.25, 0, -1), 0.5f, phongDefault));
     //world.add(make_shared<sphere>(point3(-0.75, 0, -1), 0.5f, glass));
@@ -142,5 +157,8 @@ void ray_trace(ppm_image& image)
     }
     else if (number == 2) {
         image.save("test_plane.png");
+    }
+    else {
+        image.save("art_work.png");
     }
 }

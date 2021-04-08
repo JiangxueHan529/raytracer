@@ -80,5 +80,5 @@ void ray_trace(ppm_image& image)
 		}
 	}
 
-	image.save("siloutte.png");
+	image.save("normals.png");
 }
