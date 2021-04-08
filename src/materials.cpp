@@ -59,21 +59,37 @@ void ray_trace(ppm_image& image)
    int height = image.height();
    int width = image.width();
    float aspect = width / float(height);
-   int samples_per_pixel = 10; // higher => more anti-aliasing
+   int samples_per_pixel = 100; // higher => more anti-aliasing
    int max_depth = 10; // higher => less shadow acne
+   shared_ptr<material> phongDefault;
+    point3 lookfrom(0, 0, 3);
+    point3 lookat(-0.75, 0, -1);
+    vec3 vup(0, 1, 0);
+    float dist_to_focus = length(lookfrom - lookat);//
+    float aperture = 0.7;
 
-   // Camera
-   vec3 camera_pos(0, 0, 6);
-   float viewport_height = 2.0f;
-   float focal_length = 4.0; 
-   camera cam(camera_pos, viewport_height, aspect, focal_length);
+    camera cam1(lookfrom, lookat, vup, 50, aspect, aperture, dist_to_focus);
+    if (blur == true) {
+        phongDefault = make_shared<phong>(lookfrom);
+    }
+
+
+       // Camera
+       vec3 camera_pos(0, 0, 6);
+       float viewport_height = 2.0f;
+       float focal_length = 4.0;
+       camera cam2(camera_pos, viewport_height, aspect, focal_length);
+       if (blur == false) {
+           phongDefault = make_shared<phong>(camera_pos);
+       }
+
 
    // World
    shared_ptr<material> gray = make_shared<lambertian>(color(0.5f));
    shared_ptr<material> matteGreen = make_shared<lambertian>(color(0, 0.5f, 0));
    shared_ptr<material> metalRed = make_shared<metal>(color(1, 0, 0), 0.3f);
    shared_ptr<material> glass = make_shared<dielectric>(1.5f);
-   shared_ptr<material> phongDefault = make_shared<phong>(camera_pos);
+   
 
    hittable_list world;
    world.add(make_shared<sphere>(point3(-2.25, 0, -1), 0.5f, phongDefault));
@@ -86,6 +102,7 @@ void ray_trace(ppm_image& image)
    // Ray trace
    for (int j = 0; j < height; j++)
    {
+      std::cerr << "\rScanlines remaining: " << height - j - 1 << ' ' << std::flush;
       for (int i = 0; i < width; i++)
       {
          color c(0, 0, 0);
@@ -93,14 +110,23 @@ void ray_trace(ppm_image& image)
          {
             float u = float(i + random_float()) / (width - 1);
             float v = float(height - j - 1 - random_float()) / (height - 1);
-
-            ray r = cam.get_ray(u, v);
+            ray r;
+            if (blur == true) {
+                r = cam1.get_ray(u, v);
+            }
+            else {
+                r = cam2.get_ray(u, v);
+            }
             c += ray_color(r, world, max_depth);
          }
          c = normalize_color(c, samples_per_pixel);
          image.set_vec3(j, i, c);
       }
    }
-
-   image.save("materials.png");
+   if (blur == false) {
+       image.save("materials.png");
+   }
+   else{
+       image.save("blurred_materials.png");
+   }
 }

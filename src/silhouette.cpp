@@ -83,39 +83,3 @@ void ray_trace(ppm_image& image)
 	image.save("siloutte.png");
 }
 
-//
-//RaySphereIntersection(center, radius, ray)
-//
-//// Return time t where ray hits sphere; -1 if ray does not hit
-//oc = ray.origin() - center;
-//a = dot(ray.direction(), ray.direction());
-//b = 2.0f * dot(oc, ray.direction());
-//c = dot(oc, oc) - radius * radius;
-//
-//discriminant = b * b - 4 * a * c;
-//if (discriminant < 0) return -1
-//else return (–b – sqrt(discriminant)) / 2a
-
-
-
-
-//void ray_trace(ppm_image & image)
-//{
-//	int height = image.height();
-//	int width = image.width();
-//
-//	float aspect = width / (float)height;
-//	float world_height = 2.0f;
-//	float world_width = world_height * aspect;
-//	float focal_length = 1.0f;
-//
-//	vec3 camera_pos = vec3(0);
-//	vec3 lower_left = camera_pos
-//		- 0.5f * vec3(world_width, world_height, 0)
-//		- vec3(0, 0, focal_length);
-//
-//	for (int i = 0; i < height; i++) // rows
-//	{
-//		for (int j = 0; j < width; j++) // cols
-//		{
-//			float u = j / ((float)width - 1);

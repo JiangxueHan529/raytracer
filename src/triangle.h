@@ -4,7 +4,7 @@
 
 #include "hittable.h"
 #include "AGLM.h"
-
+using namespace glm;
 float eps = 0.0001f; // epsilon for comparing floats
 class triangle : public hittable {
 public:

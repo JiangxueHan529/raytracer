@@ -69,14 +69,16 @@ public:
   virtual bool scatter(const ray& r_in, const hit_record& hit, 
      glm::color& attenuation, ray& scattered) const override 
   {
-      //glm::color Ia = ka * ambientColor;
-      //glm::color Id = kd * (float)fmax(0.0f,(dot(normalize(lightPos - hit.p), normalize(hit.normal)))) * diffuseColor; // need to add material color (albedo)
-      //vec3 view = normalize(viewPos - hit.p);
-      //vec3 r = normalize(reflect(normalize(lightPos - hit.p), normalize(hit.normal))); //2 * dot(normalize(lightPos - hit.p), normalize(hit.normal)) * normalize(hit.normal) - normalize(lightPos - hit.p);
-      //glm::color Is = ks * specColor * pow((dot(view, r)), shininess);
-      //attenuation = Ia + Id + Is;
-      attenuation = color(0);
-     return false;
+      glm::color Ia = ka * ambientColor;
+      glm::color Id = kd * (float)fmax(0.0f,(dot(normalize(lightPos - hit.p), normalize(hit.normal)))) * diffuseColor; // need to add material color (albedo)
+      vec3 view = normalize(hit.p - viewPos);
+      vec3 r = normalize(reflect(normalize(lightPos - hit.p), normalize(hit.normal))); //2 * dot(normalize(lightPos - hit.p), normalize(hit.normal)) * normalize(hit.normal) - normalize(lightPos - hit.p);
+      glm::color Is = glm::color(0);
+      if (dot(view, r) > 0) {
+          Is = ks * specColor * pow((dot(view, r)), shininess);
+      }
+      attenuation = Ia + Id + Is;
+      return false;
   }
 
 public:
@@ -125,7 +127,7 @@ public:
   virtual bool scatter(const ray& r_in, const hit_record& rec, 
      glm::color& attenuation, ray& scattered) const override 
    {
-      attenuation = color(1.0, 1.0, 1.0);
+      attenuation = color(1.0f, 1.0f, 1.0f);
       float refraction_ratio = rec.front_face ? (1.0f / ir) : ir;
       vec3 unit_direction = normalize(r_in.direction());
       vec3 refracted = refract(unit_direction, rec.normal, refraction_ratio);

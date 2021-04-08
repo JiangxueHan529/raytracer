@@ -12,12 +12,12 @@ public:
 
    bool hit(const ray& r, hit_record& rec) const
    {
-       if (dot(normalize(r.direction()), n) == 0) {
+       if (abs(dot(normalize(r.direction()), n)) < 0.000001f) {
            return false;
       }
-       if (dot((r.origin() - a), n) == 0 && dot((r.origin() + r.direction() - a), n) == 0) {
-           return false;
-       }
+       //if (dot((r.origin() - a), n) == 0 && dot((r.origin() + r.direction() - a), n) == 0) {
+       //    return false;
+       //}
        float t = (float)dot((a - r.origin()), n) / (float)dot(normalize(r.direction()), n);
        if (t < 0) {
            return false;

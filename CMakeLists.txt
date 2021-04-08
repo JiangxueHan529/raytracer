@@ -79,7 +79,9 @@ set(SOURCES
     src/AGLM.cpp
     src/ppm_image.h
     src/ppm_image.cpp
-    src/main.cpp)
+    src/main.cpp
+    src/art_work.cpp
+ )
 
 set(RT_SOURCES
     src/hittable.h
@@ -113,4 +115,6 @@ target_link_libraries(raytracer ${CORE})
 add_executable(materials src/materials.cpp ${RT_SOURCES} ${SOURCES})
 target_link_libraries(materials ${CORE})
 
+add_executable(art_work src/art_work.cpp ${RT_SOURCES} ${SOURCES})
+target_link_libraries(art_work ${CORE})
 
