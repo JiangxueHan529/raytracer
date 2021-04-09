@@ -56,7 +56,7 @@ Features Implemented:
    e. There is optional defocus blur.
 
 Images:\
-All images generated for this assignment is in the images/ directory. I'm skipping the basic ones here.
+All images generated for this assignment are in the images/ directory. I'm skipping the basic ones here.
 1. materials.png :\
 ![alt text](https://github.com/JiangxueHan529/raytracer/blob/main/images/materials.png)
 2. materials with defocus blur:\
