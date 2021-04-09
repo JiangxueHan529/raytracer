@@ -48,12 +48,12 @@ In art_work.cpp, there is an integer variable number. If generating test_triangl
 
 Features Implemented:
 1. For unique feature, I implemented defocus blur.
-2. For unique picture, I created a scene with the following features:
+2. For unique picture, I created a scene with the following features:\
    a. Changed background color.\
    b. Arranged spheres in particular shape, and used different materials and colors to create reflection effects.\
    c. Used triangles to make two pyramid shapes with phong and glass materials.\
-   4. I used all of my primitives: planes, triangles, spheres.\
-   5. There is optional defocus blur.
+   d. I used all of my primitives: planes, triangles, spheres.\
+   e. There is optional defocus blur.
 
 Images:\
 All images generated for this assignment is in the images/ directory. I'm skipping the basic ones here.
