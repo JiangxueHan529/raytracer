@@ -64,13 +64,13 @@ void ray_trace(ppm_image& image)
     int samples_per_pixel = 10; // higher => more anti-aliasing
     int max_depth = 100; // higher => less shadow acne
     shared_ptr<material> phongDefault;
-    point3 lookfrom(0, 0, 3);
-    point3 lookat(0, 0, 0);
+    point3 lookfrom(1, 0, 6);
+    point3 lookat(1.3, 0, 0);
     vec3 vup(0, 1, 0);
     float dist_to_focus = length(lookfrom - lookat);//
     float aperture = 0.3;
 
-    camera cam1(lookfrom, lookat, vup, 50, aspect, aperture, dist_to_focus);
+    camera cam1(lookfrom, lookat, vup, 40, aspect, aperture, dist_to_focus);
     if (blur == true) {
         phongDefault = make_shared<phong>(lookfrom);
     }
@@ -152,13 +152,16 @@ void ray_trace(ppm_image& image)
             image.set_vec3(j, i, c);
         }
     }
-    if (number == 1) {
+    if (number == 1 && blur == false) {
         image.save("test_triangle.png");
     }
-    else if (number == 2) {
+    else if (number == 2 && blur == false) {
         image.save("test_plane.png");
     }
-    else {
+    else if (blur == false) {
         image.save("art_work.png");
+    }
+    else {
+        image.save("art_work_blurred.png");
     }
 }
